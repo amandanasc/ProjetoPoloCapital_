@@ -42,29 +42,23 @@ namespace ExpectativaMensal.ViewModels
             GetExpectativasCommand = new RelayCommand(async () => await GetExpectativasAsync());
         }
 
-        public string addFilters(string filtro, string uriText)
+        //Formata o filtro para ser adicionado à requisição do método GetFilteredExpectativasAsync()
+        public string addFilters(string uriText)
         {
 
-            if(filtro != null && filtro != "")
+            if(uriText != null)
             {
-                if(filtro == "indicador")
-                {
-                    return $"&%24filter={uriText}&%24top=100";
-                } 
-
-                if(filtro ==  "ordenar")
-                {
-                    return $"&%24orderby={uriText}&%24top=100";
-                }
+                return $"&%24filter=Indicador%20eq%20'{uriText}'&%24top=100";
             }
-
+            
             return "";
         }
 
-        public async Task GetFilteredExpectativasAsync(string? filter, string? uriText)
+        //Método para consumir os dados da API com filtros adicionados
+        public async Task GetFilteredExpectativasAsync(string? uriText)
         {
 
-            string filters = addFilters(filter, uriText);
+            string filters = addFilters(uriText);
 
             using (HttpClient client = new HttpClient())
             {
@@ -80,6 +74,7 @@ namespace ExpectativaMensal.ViewModels
             }
         }
 
+        //Método para consumir os dados da API
         public async Task GetExpectativasAsync()
         {
 
@@ -97,6 +92,7 @@ namespace ExpectativaMensal.ViewModels
             }
         }
 
+        //Método para desserializar o json recebido e adicionar os dados a Collection Expectativa
         public void DesserializarJson(string json)
         {
             try
@@ -112,12 +108,12 @@ namespace ExpectativaMensal.ViewModels
             }
             catch (JsonSerializationException ex)
             {
-                // Tratar a exceção de desserialização aqui
+                // Tratar a exceção de desserialização
                 Console.WriteLine($"Erro na desserialização: {ex.Message}");
             }
             catch (Exception ex)
             {
-                // Tratar outras exceções aqui
+                // Tratar outras exceções
                 Console.WriteLine($"Erro: {ex.Message}");
             }
         }

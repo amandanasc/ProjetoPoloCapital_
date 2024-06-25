@@ -18,8 +18,10 @@
             <RowDefinition Height="45px"/>
             <RowDefinition />
         </Grid.RowDefinitions>
+        <!--Combobox/Select para selecionar os indicadores que serão exibidos e agrupa-los-->
         <StackPanel Margin="10px" Grid.Column="0">
             <ComboBox Name="SelectIndicador" SelectionChanged="SelectIndicador_SelectionChanged">
+                <ComboBoxItem>Todos</ComboBoxItem>
                 <ComboBoxItem>Câmbio</ComboBoxItem>
                 <ComboBoxItem>IGP-DI</ComboBoxItem>
                 <ComboBoxItem>IGP-M</ComboBoxItem>
@@ -34,14 +36,13 @@
                 <ComboBoxItem>IPCA Serviços</ComboBoxItem>
                 <ComboBoxItem>IPCA-15</ComboBoxItem>
                 <ComboBoxItem>IPC-Fipe</ComboBoxItem>
-                <ComboBoxItem>IPC-Fipe</ComboBoxItem>
                 <ComboBoxItem>Produção industrial</ComboBoxItem>
                 <ComboBoxItem>Taxa de desocupação</ComboBoxItem>
             </ComboBox>
         </StackPanel>
         <StackPanel Grid.Column="1">
-            <!--Fazer a exportação de um arquivo CSV com os dados selecionados-->
-            <Button Name="btnOrder" Grid.Row="0" Margin="10px"  Width="60px" Height="20px" Click="btnOrder_Click">Ordenar</Button>
+            <!--Exibir os dados de acordo com a data escolhida-->
+            
         </StackPanel>
         <StackPanel Grid.Column="2">
             <!--Fazer a exportação de um arquivo CSV com os dados selecionados-->
@@ -55,6 +56,7 @@
             <!--Salvar os dados no banco de dados-->
             <Button Name="btnSave" Grid.Row="0" Margin="10px"  Width="80px" Height="20px" Click="btnSave_Click">Salvar</Button>
         </StackPanel>
+        <!--Exibição dos dados-->
         <DataGrid ItemsSource="{Binding Expectativas}" AutoGenerateColumns="True" Grid.Row="1" Grid.ColumnSpan="5" Margin="10px" />
     </Grid>
 </Window>
