@@ -11,6 +11,7 @@ using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using ExpectativaMensal.Models;
+using Microsoft.VisualBasic;
 using Newtonsoft.Json;
 
 namespace ExpectativaMensal.ViewModels
@@ -40,61 +41,83 @@ namespace ExpectativaMensal.ViewModels
             GetExpectativasCommand = new RelayCommand(async () => await GetExpectativasAsync());
         }
 
-
-        public void setOrder(string order)
+        public string addFilters(string filtro, string uriText)
         {
-            if(order == "order")
+
+            if(filtro != null && filtro != "")
             {
-                this.order = "&%24orderby=Data";
+                if(filtro == "indicador")
+                {
+                    return $"&%24filter={uriText}&%24top=50";
+                } 
+
+                if(filtro ==  "ordenar")
+                {
+                    return $"&%24orderby={uriText}&%24top=50";
+                }
             }
 
-            return;
+            return "";
         }
 
-        public void setFilterIndicador(string indicador)
+        public async Task GetFilteredExpectativasAsync(string? filter, string? uriText)
         {
-            if(indicador != null)
-            {
-                this.indicador = $"&%24filter={indicador}"; //&%24filter=IPCA
-            }
 
-            return;
+            string filters = addFilters(filter, uriText);
+
+            using (HttpClient client = new HttpClient())
+            {
+                string url = $"https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativaMercadoMensais?%24format=json{filters}";
+
+                HttpResponseMessage response = await client.GetAsync(url);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    DesserializarJson(json);
+                }
+            }
         }
 
         public async Task GetExpectativasAsync()
         {
-            using(HttpClient client = new HttpClient())
+
+            using (HttpClient client = new HttpClient())
             {
-                string url = $"https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativaMercadoMensais?%24format=json&%24top=10{this.indicador}{this.order}";
+                string url = $"https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativaMercadoMensais?%24format=json&%24top=50";
 
                 HttpResponseMessage response = await client.GetAsync(url);
 
                 if(response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
-
-                    try
-                    {
-                        var apiResponse = JsonConvert.DeserializeObject<Response>(json);
-
-                        Expectativas.Clear();
-
-                        foreach (var expectativa in apiResponse.Value)
-                        {
-                            Expectativas.Add(expectativa);
-                        }
-                    }
-                    catch (JsonSerializationException ex)
-                    {
-                        // Tratar a exceção de desserialização aqui
-                        Console.WriteLine($"Erro na desserialização: {ex.Message}");
-                    }
-                    catch (Exception ex)
-                    {
-                        // Tratar outras exceções aqui
-                        Console.WriteLine($"Erro: {ex.Message}");
-                    }
+                    DesserializarJson(json);
                 }
+            }
+        }
+
+        public void DesserializarJson(string json)
+        {
+            try
+            {
+                var apiResponse = JsonConvert.DeserializeObject<Response>(json);
+
+                Expectativas.Clear();
+
+                foreach (var expectativa in apiResponse.Value)
+                {
+                    Expectativas.Add(expectativa);
+                }
+            }
+            catch (JsonSerializationException ex)
+            {
+                // Tratar a exceção de desserialização aqui
+                Console.WriteLine($"Erro na desserialização: {ex.Message}");
+            }
+            catch (Exception ex)
+            {
+                // Tratar outras exceções aqui
+                Console.WriteLine($"Erro: {ex.Message}");
             }
         }
 
