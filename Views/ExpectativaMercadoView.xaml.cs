@@ -39,11 +39,11 @@ namespace ExpectativaMensal.Views
             }
         }
 
-        private async void MainWindow_Loaded(string? filter, string? uriText)
+        private async Task GetExpectativasByIndicador(string uriText)
         {
             try
             {
-                await _viewModel.GetFilteredExpectativasAsync(filter, uriText); // Chamar o método assíncrono do ViewModel
+                await _viewModel.GetFilteredExpectativasAsync("indicador", uriText);
             }
             catch (Exception ex)
             {
@@ -51,16 +51,27 @@ namespace ExpectativaMensal.Views
             }
         }
 
+        private async Task GetExpectativasByOrder(string uriText)
+        {
+            try
+            {
+                await _viewModel.GetFilteredExpectativasAsync("ordenar", uriText);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Erro: {ex.Message}");
+            }
+        }
+
+
         private void SelectIndicador_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ComboBoxItem indicador = (ComboBoxItem)SelectIndicador.SelectedItem;
             string indicadorSelecionado = indicador.Content.ToString();
 
-            string indicadorTextoFormatado = FormatStringUri(indicadorSelecionado);
+            string uriText = FormatStringUri(indicadorSelecionado);
 
-            //MessageBox.Show(indicadorTextoFormatado);
-
-            MainWindow_Loaded("indicador", indicadorTextoFormatado);
+            GetExpectativasByIndicador(uriText);
         }
 
         private string FormatStringUri(string uriText)

@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using ExpectativaMensal.Models;
 using Microsoft.VisualBasic;
@@ -48,12 +49,12 @@ namespace ExpectativaMensal.ViewModels
             {
                 if(filtro == "indicador")
                 {
-                    return $"&%24filter={uriText}&%24top=50";
+                    return $"&%24filter={uriText}&%24top=100";
                 } 
 
                 if(filtro ==  "ordenar")
                 {
-                    return $"&%24orderby={uriText}&%24top=50";
+                    return $"&%24orderby={uriText}&%24top=100";
                 }
             }
 
@@ -84,7 +85,7 @@ namespace ExpectativaMensal.ViewModels
 
             using (HttpClient client = new HttpClient())
             {
-                string url = $"https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativaMercadoMensais?%24format=json&%24top=50";
+                string url = $"https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativaMercadoMensais?%24format=json&%24top=100";
 
                 HttpResponseMessage response = await client.GetAsync(url);
 
