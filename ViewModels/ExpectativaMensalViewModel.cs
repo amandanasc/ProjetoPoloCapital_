@@ -42,26 +42,20 @@ namespace ExpectativaMensal.ViewModels
             GetExpectativasCommand = new RelayCommand(async () => await GetExpectativasAsync());
         }
 
-        public void ListarExpectativasPorDatas(string dtInicio, string dtFinal)
+        //Método que retorna as Expectativas dentro de um período selecionado pelo usuário
+        public void ListExpectativasByDates(DateTime dtInicio, DateTime dtFinal)
         {
-            MessageBox.Show($"data inicio: {dtInicio} data final: {dtFinal}");
-            DateTime convertedDateInicio;
-            DateTime convertedDateFinal;
-
             try
             {
-                convertedDateInicio = Convert.ToDateTime(dtInicio);
-                convertedDateFinal = Convert.ToDateTime(dtFinal);
-
                 ObservableCollection<ExpectativaMercado> auxiliar = new();
 
-                MessageBox.Show($"data inicio: {convertedDateInicio} data final: {convertedDateFinal}");
+                MessageBox.Show($"data inicio: {dtInicio} data final: {dtFinal}");
 
                 foreach (var expectativa in Expectativas)
                 {
                     var d = Convert.ToDateTime(expectativa.Data);
 
-                    if (d >= convertedDateInicio && d <= convertedDateFinal)
+                    if (d >= dtInicio && d <= dtFinal)
                     {
                         auxiliar.Add(expectativa);
                     }
@@ -77,14 +71,11 @@ namespace ExpectativaMensal.ViewModels
                 {
                     Expectativas.Add(aux);
                 }
-
-                //var a = dates.Where(d => d >= convertedDateInicio && d <= convertedDateFinal);
-
             }
             catch (FormatException)
             {
-                MessageBox.Show("'{0}' is not in the proper format.", dtInicio);
-                MessageBox.Show("'{0}' is not in the proper format.", dtFinal);
+                MessageBox.Show($"'{dtInicio}' is not in the proper format.");
+                MessageBox.Show($"'{dtFinal}' is not in the proper format.");
             }
         }
 
@@ -115,7 +106,7 @@ namespace ExpectativaMensal.ViewModels
                 if (response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
-                    DesserializarJson(json);
+                    DeserializeJson(json);
                 }
             }
         }
@@ -133,13 +124,13 @@ namespace ExpectativaMensal.ViewModels
                 if(response.IsSuccessStatusCode)
                 {
                     var json = await response.Content.ReadAsStringAsync();
-                    DesserializarJson(json);
+                    DeserializeJson(json);
                 }
             }
         }
 
         //Método para desserializar o json recebido e adicionar os dados a Collection Expectativa
-        public void DesserializarJson(string json)
+        public void DeserializeJson(string json)
         {
             try
             {
@@ -165,7 +156,7 @@ namespace ExpectativaMensal.ViewModels
         }
 
         //Método para formatar os dados de Expectativa de Mercado para o padrão CSV e Gravar os dados em um novo arquivo CSV
-        public void ExportarParaCsv(string fileName, ObservableCollection<ExpectativaMercado> expectativas)
+        public void ExportCsv(string fileName, ObservableCollection<ExpectativaMercado> expectativas)
         {
             StringBuilder csv = new StringBuilder();
 
@@ -180,6 +171,20 @@ namespace ExpectativaMensal.ViewModels
 
             File.WriteAllText(fileName, csv.ToString());
             MessageBox.Show("Dados exportados com sucesso!", "Exportar CSV", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        //Método que envia os dados para o Banco de Dados
+        public async Task SaveOnDataBase()
+        {
+            using (AppDbContext context = new AppDbContext())
+            {
+                foreach(var expectativa in Expectativas)
+                {
+                    context.ExpectativaMercadoMensal.Add(expectativa);
+                }
+
+                await context.SaveChangesAsync();
+            }
         }
 
         //EVENT Properties and Handlers

@@ -46,14 +46,14 @@
             <!--Exibir os dados de acordo com a data escolhida-->
             <StackPanel Margin="10px">
                 <TextBlock Text="Data Inicial"/>
-                <DatePicker Name="dpDataInicial" SelectedDateChanged="dtDataInicial"></DatePicker>
+                <DatePicker Name="dpDataInicial" SelectedDateChanged="SelectInitialDate"></DatePicker>
             </StackPanel>
         </StackPanel>
         <StackPanel Grid.Column="2">
             <!--Exibir os dados de acordo com a data escolhida-->
             <StackPanel Margin="10px">
                 <TextBlock Text="Data Final"/>
-                <DatePicker Name="dpDataFinal" IsEnabled="{Binding isDataInicialNotEmpty}" SelectedDateChanged="dtDataFinal"></DatePicker>
+                <DatePicker Name="dpDataFinal" IsEnabled="{Binding isDataInicialNotEmpty}" SelectedDateChanged="SelectFinalDate"></DatePicker>
             </StackPanel>
         </StackPanel>
         <StackPanel Grid.Column="3">

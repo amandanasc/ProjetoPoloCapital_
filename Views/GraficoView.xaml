@@ -10,7 +10,6 @@
         <lvc:CartesianChart Name="grafico">
             <lvc:CartesianChart.Series>
                 <lvc:LineSeries Title="Data" Values="{Binding Values}"/>
-                <lvc:LineSeries Title="Trend" Values="{Binding TrendValues}" Stroke="Red"/>
             </lvc:CartesianChart.Series>
         </lvc:CartesianChart>
     </Grid>

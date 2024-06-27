@@ -1,5 +1,6 @@
 ﻿using ExpectativaMensal.Models;
 using ExpectativaMensal.ViewModels;
+using Microsoft.VisualBasic;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -17,14 +18,16 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using static ExpectativaMensal.ViewModels.ExpectativaMensalViewModel;
 
 namespace ExpectativaMensal.Views
 {
     public partial class ExpectativaMercadoView : Window
     {
         private readonly ExpectativaMensalViewModel _viewModel;
-        public string dtInicial;
-        public string dtFinal;
+
+        public DateTime dtInicial;
+        public DateTime dtFinal;
         public bool isDataInicialNotEmpty = false;
 
         //Ao iniciar o componente, adiciona as informações do _viewModel ao DataContext e carrega os dados na tela
@@ -98,24 +101,24 @@ namespace ExpectativaMensal.Views
             return uriText.Replace(" ", "%20");
         }
 
-        private void dtDataInicial(object sender, SelectionChangedEventArgs e)
+        //Formata e atribui a data selecionada à variável local
+        private void SelectInitialDate(object sender, SelectionChangedEventArgs e)
         {
             DatePicker datePicker = sender as DatePicker;
             DateTime date = (DateTime)datePicker.SelectedDate;
-            string dateFormated = $"{date:yyyy-MM-dd}";
-            this.dtInicial = dateFormated;
+            this.dtInicial = date;
 
             this.isDataInicialNotEmpty = true;
         }
 
-        private void dtDataFinal(object sender, SelectionChangedEventArgs e)
+        //Atribui a data selecionada à variável local e chama o método de Listagem
+        private void SelectFinalDate(object sender, SelectionChangedEventArgs e)
         {
             DateTime date = (DateTime)dpDataFinal.SelectedDate;
-            string dateFormated = $"{date:yyyy-MM-dd}";
-            this.dtFinal = dateFormated;
+            this.dtFinal = date;
 
             //chamar a função do view model passando a data inicial e final
-            _viewModel.ListarExpectativasPorDatas(this.dtInicial, this.dtFinal);
+            _viewModel.ListExpectativasByDates(this.dtInicial, this.dtFinal);
         }
 
         //Método para exportação dos dados para CSV
@@ -129,26 +132,42 @@ namespace ExpectativaMensal.Views
 
             if (saveFileDialog.ShowDialog() == true)
             {
-                _viewModel.ExportarParaCsv(saveFileDialog.FileName, _viewModel.Expectativas);
+                _viewModel.ExportCsv(saveFileDialog.FileName, _viewModel.Expectativas);
             }
         }
 
+        //Chama a View para criação do Gráfico
         private void btnGraphic_Click(object sender, RoutedEventArgs e)
         {
-            List<double> data = new();
+            List<double> min = new List<double>();
+            List<double> max = new List<double>();
+            List<double> desvioPadrao = new List<double>();
+            List<double> baseCalculo = new List<double>();
 
             for (int i = 0; i < _viewModel.Expectativas.Count; i++)
             {
-                data.Add((double)_viewModel.Expectativas[i].Media);
+                min.Add((double)_viewModel.Expectativas[i].Minimo);
+                max.Add((double)_viewModel.Expectativas[i].Maximo);
+                desvioPadrao.Add((double)_viewModel.Expectativas[i].DesvioPadrao);
+                baseCalculo.Add((double)_viewModel.Expectativas[i].DesvioPadrao);
             }
 
-            GraficoView graphView = new(data);
-            //graphView.Show();
+            GraficoView graphView = new(_viewModel.Expectativas.Count, min, max, desvioPadrao, baseCalculo);
+            graphView.Show();
         }
 
+        //Chama o método que salva os dados no Banco de Dados
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Você clicou em Salvar");
+            try
+            {
+                _viewModel.SaveOnDataBase();
+                MessageBox.Show("Salvo com Sucesso!");
+            }
+            catch 
+            {
+                MessageBox.Show("Erro ao salvar informações no Banco de Dados");
+            }
         }
     }
 }
