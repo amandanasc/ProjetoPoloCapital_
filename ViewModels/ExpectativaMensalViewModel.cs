@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -15,6 +16,7 @@ using System.Windows.Input;
 using ExpectativaMensal.Models;
 using Microsoft.VisualBasic;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace ExpectativaMensal.ViewModels
 {
@@ -32,15 +34,58 @@ namespace ExpectativaMensal.ViewModels
             }
         }
 
-        public string order;
-        public string indicador;
-
         public ICommand GetExpectativasCommand { get; }
 
         public ExpectativaMensalViewModel()
         {
             Expectativas = new ObservableCollection<ExpectativaMercado>();
             GetExpectativasCommand = new RelayCommand(async () => await GetExpectativasAsync());
+        }
+
+        public void ListarExpectativasPorDatas(string dtInicio, string dtFinal)
+        {
+            MessageBox.Show($"data inicio: {dtInicio} data final: {dtFinal}");
+            DateTime convertedDateInicio;
+            DateTime convertedDateFinal;
+
+            try
+            {
+                convertedDateInicio = Convert.ToDateTime(dtInicio);
+                convertedDateFinal = Convert.ToDateTime(dtFinal);
+
+                ObservableCollection<ExpectativaMercado> auxiliar = new();
+
+                MessageBox.Show($"data inicio: {convertedDateInicio} data final: {convertedDateFinal}");
+
+                foreach (var expectativa in Expectativas)
+                {
+                    var d = Convert.ToDateTime(expectativa.Data);
+
+                    if (d >= convertedDateInicio && d <= convertedDateFinal)
+                    {
+                        auxiliar.Add(expectativa);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+
+                Expectativas.Clear();
+
+                foreach (var aux in auxiliar)
+                {
+                    Expectativas.Add(aux);
+                }
+
+                //var a = dates.Where(d => d >= convertedDateInicio && d <= convertedDateFinal);
+
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("'{0}' is not in the proper format.", dtInicio);
+                MessageBox.Show("'{0}' is not in the proper format.", dtFinal);
+            }
         }
 
         //Formata o filtro para ser adicionado à requisição do método GetFilteredExpectativasAsync()
