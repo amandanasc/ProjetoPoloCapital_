@@ -11,16 +11,18 @@
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
             <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="0.7*" />
+            <ColumnDefinition Width="0.7*" />
+            <ColumnDefinition Width="0.7*" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="45px"/>
+            <RowDefinition Height="60px"/>
             <RowDefinition />
         </Grid.RowDefinitions>
         <!--Combobox/Select para selecionar os indicadores que serão exibidos e agrupa-los-->
         <StackPanel Margin="10px" Grid.Column="0">
-            <ComboBox Name="SelectIndicador" SelectionChanged="SelectIndicador_SelectionChanged">
+            <TextBlock Text="Indicadores"/>
+            <ComboBox Name="SelectIndicador" Height="22px"  SelectionChanged="SelectIndicador_SelectionChanged">
                 <ComboBoxItem>Todos</ComboBoxItem>
                 <ComboBoxItem>Câmbio</ComboBoxItem>
                 <ComboBoxItem>IGP-DI</ComboBoxItem>
@@ -42,21 +44,31 @@
         </StackPanel>
         <StackPanel Grid.Column="1">
             <!--Exibir os dados de acordo com a data escolhida-->
-            
+            <StackPanel Margin="10px">
+                <TextBlock Text="Data Inicial"/>
+                <DatePicker Name="DataInicial"></DatePicker>
+            </StackPanel>
         </StackPanel>
         <StackPanel Grid.Column="2">
-            <!--Fazer a exportação de um arquivo CSV com os dados selecionados-->
-            <Button Name="btnExport" Grid.Row="0" Margin="10px"  Width="60px" Height="20px" Click="btnExport_Click">Exportar</Button>
+            <!--Exibir os dados de acordo com a data escolhida-->
+            <StackPanel Margin="10px">
+                <TextBlock Text="Data Final"/>
+                <DatePicker Name="DataFinal"></DatePicker>
+            </StackPanel>
         </StackPanel>
         <StackPanel Grid.Column="3">
-            <!--Criar gráfico linear para o tipo de indicador selecionado-->
-            <Button Name="btnGraphic" Grid.Row="0" Margin="10px"  Width="80px" Height="20px" Click="btnGraphic_Click">Criar Gráfico</Button>
+            <!--Fazer a exportação de um arquivo CSV com os dados selecionados-->
+            <Button Name="btnExport" Grid.Row="0" Margin="10px 26px 10px 10px"  Width="60px" Height="20px" Click="btnExport_Click">Exportar</Button>
         </StackPanel>
         <StackPanel Grid.Column="4">
+            <!--Criar gráfico linear para o tipo de indicador selecionado-->
+            <Button Name="btnGraphic" Grid.Row="0" Margin="10px 26px 10px 10px"  Width="80px" Height="20px" Click="btnGraphic_Click">Criar Gráfico</Button>
+        </StackPanel>
+        <StackPanel Grid.Column="5">
             <!--Salvar os dados no banco de dados-->
-            <Button Name="btnSave" Grid.Row="0" Margin="10px"  Width="80px" Height="20px" Click="btnSave_Click">Salvar</Button>
+            <Button Name="btnSave" Grid.Row="0" Margin="10px 26px 10px 10px"  Width="80px" Height="20px" Click="btnSave_Click">Salvar</Button>
         </StackPanel>
         <!--Exibição dos dados-->
-        <DataGrid ItemsSource="{Binding Expectativas}" AutoGenerateColumns="True" Grid.Row="1" Grid.ColumnSpan="5" Margin="10px" />
+        <DataGrid ItemsSource="{Binding Expectativas}" AutoGenerateColumns="True" Grid.Row="1" Grid.ColumnSpan="6" Margin="10px" />
     </Grid>
 </Window>

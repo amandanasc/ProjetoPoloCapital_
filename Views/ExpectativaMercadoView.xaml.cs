@@ -39,7 +39,7 @@ namespace ExpectativaMensal.Views
             GetAllExpectativas();
         }
 
-        //Método que acessa a função que recebe os dados da API no _viewModel na forma de tarefa (task)
+        //Método que chama a função que recebe os dados da API no _viewModel
         private async Task GetAllExpectativas()
         {
             try
@@ -72,10 +72,8 @@ namespace ExpectativaMensal.Views
         {
             ComboBoxItem indicador = (ComboBoxItem)SelectIndicador.SelectedItem;
 
-            //transforma o valor clicado em string
             string indicadorSelecionado = indicador.Content.ToString();
 
-            //formata o valor para o formato que será usado na requisição à API
             string uriText = FormatStringUri(indicadorSelecionado);
 
             if (uriText == null)
@@ -96,12 +94,10 @@ namespace ExpectativaMensal.Views
             return uriText.Replace(" ", "%20");
         }
 
+        private void dtDataInicial(object sender, RoutedEventArgs e)
+        {
 
-        //private void btnDate_Click(object sender, RoutedEventArgs e)
-        //{
-        //    MessageBox.Show("Você clicou em Data");
-        //}
-
+        }
 
         //Método para exportação dos dados para CSV
         private void btnExport_Click(object sender, RoutedEventArgs e)
@@ -114,32 +110,22 @@ namespace ExpectativaMensal.Views
 
             if(saveFileDialog.ShowDialog() == true)
             {
-                ExportarParaCsv(saveFileDialog.FileName, _viewModel.Expectativas);
+               _viewModel.ExportarParaCsv(saveFileDialog.FileName, _viewModel.Expectativas);
             }
         }
 
-        //Método para formatar os dados de Expectativa de Mercado para o padrão CSV e Gravar os dados em um novo arquivo CSV
-        private void ExportarParaCsv(string fileName, ObservableCollection<ExpectativaMercado> expectativas)
-        {
-            StringBuilder csv = new StringBuilder();
+        //private void btnGraphic_Click(object sender, RoutedEventArgs e)
+        //{
+        //    List<double> data = new();
 
-            // cabeçalho
-            csv.AppendLine("Indicador,Data,Data Referencia,Media,Mediana,Desvio Padrao,Minimo,Maximo,Numero Respondentes,Base Calculo");
-            
-            // corpo/células
-            foreach(var expectativa in expectativas)
-            {
-                csv.AppendLine($"{expectativa.Indicador},{expectativa.Data},{expectativa.DataReferencia},{expectativa.Media},{expectativa.Mediana},{expectativa.DesvioPadrao},{expectativa.Minimo},{expectativa.Maximo},{expectativa.numeroRespondentes},{expectativa.baseCalculo}");
-            }
+        //    for (int i = 0; i < _viewModel.Expectativas.Count; i++)
+        //    {
+        //        data.Add((double)_viewModel.Expectativas[i].Media);
+        //    }
 
-            File.WriteAllText(fileName, csv.ToString());
-            MessageBox.Show("Dados exportados com sucesso!", "Exportar CSV", MessageBoxButton.OK, MessageBoxImage.Information);
-        }
-
-        private void btnGraphic_Click(object sender, RoutedEventArgs e)
-        {
-            MessageBox.Show("Você clicou em Gráfico");
-        }
+        //    GraficoView graphView = new(data);
+        //    //graphView.Show();
+        //}
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {

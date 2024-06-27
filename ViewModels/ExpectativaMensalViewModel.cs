@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -48,7 +49,7 @@ namespace ExpectativaMensal.ViewModels
 
             if(uriText != null)
             {
-                return $"&%24filter=Indicador%20eq%20'{uriText}'&%24top=100";
+                return $"&%24filter=Indicador%20eq%20'{uriText}'&%24top=1000";
             }
             
             return "";
@@ -80,7 +81,7 @@ namespace ExpectativaMensal.ViewModels
 
             using (HttpClient client = new HttpClient())
             {
-                string url = $"https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativaMercadoMensais?%24format=json&%24top=100";
+                string url = $"https://olinda.bcb.gov.br/olinda/servico/Expectativas/versao/v1/odata/ExpectativaMercadoMensais?%24format=json&%24top=1000";
 
                 HttpResponseMessage response = await client.GetAsync(url);
 
@@ -118,6 +119,23 @@ namespace ExpectativaMensal.ViewModels
             }
         }
 
+        //Método para formatar os dados de Expectativa de Mercado para o padrão CSV e Gravar os dados em um novo arquivo CSV
+        public void ExportarParaCsv(string fileName, ObservableCollection<ExpectativaMercado> expectativas)
+        {
+            StringBuilder csv = new StringBuilder();
+
+            // cabeçalho
+            csv.AppendLine("Indicador,Data,Data Referencia,Media,Mediana,Desvio Padrao,Minimo,Maximo,Numero Respondentes,Base Calculo");
+
+            // corpo/células
+            foreach (var expectativa in expectativas)
+            {
+                csv.AppendLine($"{expectativa.Indicador},{expectativa.Data},{expectativa.DataReferencia},{expectativa.Media},{expectativa.Mediana},{expectativa.DesvioPadrao},{expectativa.Minimo},{expectativa.Maximo},{expectativa.numeroRespondentes},{expectativa.baseCalculo}");
+            }
+
+            File.WriteAllText(fileName, csv.ToString());
+            MessageBox.Show("Dados exportados com sucesso!", "Exportar CSV", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
 
         //EVENT Properties and Handlers
 
